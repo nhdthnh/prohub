@@ -1,0 +1,37 @@
+<div class="filter-row">
+    <div class="filter-item">
+        <select name="brand" class="filter-select">
+            <option value="">Brand (Tất cả)</option>
+            {% for item in filters.brands %}
+                <option value="{{ item.brand }}">{{ item.brand }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="filter-item">
+        <select name="platform" class="filter-select">
+            <option value="">Nền tảng (Tất cả)</option>
+            {% for item in filters.platforms %}
+                <option value="{{ item.PlatformName }}">{{ item.PlatformName }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="filter-item">
+        <select name="shop" class="filter-select">
+            <option value="">ShopName (Tất cả)</option>
+            {% for item in filters.shops %}
+                <option value="{{ item.ShopName }}">{{ item.ShopName }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="filter-item">
+        <select name="status" class="filter-select">
+            <option value="">StatusName (Tất cả)</option>
+            {% for item in filters.statuses %}
+                <option value="{{ item.StatusName }}">{{ item.StatusName }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>

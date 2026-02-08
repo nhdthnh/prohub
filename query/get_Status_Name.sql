@@ -1,0 +1,1 @@
+SELECT `StatusName` from status

@@ -1,0 +1,150 @@
+/* =========================================
+   3. MAIN CONTENT & HEADER STYLES
+   (Phần nội dung chính và Header cong)
+   ========================================= */
+
+/* Layout chính */
+.main-content {
+    flex: 1;
+    background-color: var(--bg-body);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Header Container --- */
+.dashboard-header {
+    background-color: var(--bg-body);
+    padding-bottom: 20px;
+}
+
+.header-top-bar {
+    display: flex;
+    align-items: stretch;
+    height: 60px;
+}
+
+/* --- Phần Xanh (Có đường cong) --- */
+.blue-section {
+    background: var(--header-gradient);
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    color: white;
+    
+    /* TẠO ĐƯỜNG CONG Ở ĐÂY */
+    border-bottom-right-radius: 60px; 
+    
+    position: relative;
+    z-index: 1;
+    box-shadow: 4px 4px 10px rgba(0,0,0,0.1);
+}
+
+.header-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+}
+
+/* Logo OQR */
+.header-logo {
+    background-color: #2962ff;
+    padding: 5px 15px;
+    border-radius: 20px;
+    border: 2px solid rgba(255,255,255,0.2);
+    margin-right: -10px;
+}
+
+.logo-text {
+    font-weight: 800;
+    color: var(--text-neon);
+    letter-spacing: 1px;
+}
+
+/* --- Phần Trắng (Date Picker) --- */
+.date-section {
+    background-color: var(--bg-body); /* Trùng màu nền để tạo cảm giác "cắt" */
+    width: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 20px;
+}
+
+/* Wrapper giữ nguyên style cũ của bạn */
+.date-picker-wrapper {
+    background: white;
+    border: 1px solid #cbd5e1;
+    padding: 5px 15px; /* Chỉnh lại padding một chút */
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    min-width: 220px; /* Đảm bảo đủ rộng cho ngày tháng */
+}
+
+/* Style cho input để nó nhìn như text bình thường */
+.date-picker-wrapper input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-family: inherit;
+    font-size: 13px;
+    color: #334155;
+    font-weight: 500;
+    width: 100%;
+    cursor: pointer;
+}
+
+/* Icon mũi tên */
+.date-picker-wrapper i {
+    color: #64748b;
+    pointer-events: none; /* Để click vào icon vẫn kích hoạt input */
+}
+
+/* --- Dòng thông tin phụ --- */
+.sub-header-info {
+    padding: 10px 30px;
+    font-size: 13px;
+    color: #64748b;
+    font-style: italic;
+}
+
+/* --- Hàng Filter --- */
+.filter-row {
+    display: flex;
+    gap: 15px;
+    padding: 0 30px;
+    margin-top: 5px;
+    flex-wrap: wrap;
+}
+
+.filter-item {
+    background: white;
+    border: 1px solid #cbd5e1;
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--text-dark);
+    min-width: 150px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filter-item:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+/* --- Body Content --- */
+.content-body {
+    padding: 30px;
+    /* Nơi chứa bảng dữ liệu */
+}

@@ -1,0 +1,1 @@
+SELECT DISTINCT `brand` from product where brand is not NULL ORDER BY brand ASC;

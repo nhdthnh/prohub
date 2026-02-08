@@ -1,0 +1,38 @@
+/* =========================================
+   1. ROOT & GLOBAL STYLES
+   (Cấu hình màu sắc, font chữ, reset)
+   ========================================= */
+:root {
+    /* --- Sidebar Colors --- */
+    --bg-sidebar: #051e3e;       /* Xanh đậm tối (Sidebar) */
+    --bg-header-hover: #0a2a52;  /* Hover nhóm menu */
+    --bg-active-item: #1e4b8a;   /* Active Item (Overview) */
+    
+    /* --- Header & Main Colors --- */
+    --bg-body: #f1f5f9;          /* Xanh xám nhạt (Nền chính) */
+    --header-gradient: linear-gradient(90deg, #0d47a1 0%, #1565c0 100%); /* Gradient xanh Header */
+    --text-neon: #ccff00;        /* Màu logo OQR */
+    
+    /* --- Text Colors --- */
+    --text-color: #ffffff;       /* Chữ trắng */
+    --text-dark: #334155;        /* Chữ đen (dùng cho nền trắng) */
+    --text-muted: #cbd5e1;       /* Chữ mờ */
+    --text-header-group: #8ab4f8;/* Màu header nhóm menu */
+
+    /* --- Fonts --- */
+    --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-main);
+    background-color: var(--bg-body);
+    display: flex;
+    height: 100vh;
+    overflow: hidden; /* Ẩn scroll body để scroll từng phần */
+}
