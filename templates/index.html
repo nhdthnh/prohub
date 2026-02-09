@@ -5,18 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OQR Dashboard</title>
-    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/airbnb.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/virtual-select-plugin@1.0.39/dist/virtual-select.min.css">
-    
+
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='header.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='sidebar.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='filter.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='card.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='chart.css') }}">
 </head>
 
 <body>
@@ -24,13 +26,31 @@
     {% include 'components/sidebar.html' %}
 
     <main class="main-content">
-        
+
         {% include 'components/header.html' %}
 
         {% include 'components/filters.html' %}
 
         <div class="content-body">
+            <div class="dashboard-stats">
+                {% include 'components/card_revenue.html' %}
             </div>
+            <div class="charts-grid">
+
+                <div >
+                    {% include 'components/chart_line.html' %}
+                </div>
+
+                <div>
+                    {% include 'components/chart_pie_status.html' %}
+                </div>
+
+                <div>
+                    {% include 'components/chart_map.html' %}
+                </div>
+
+            </div>
+        </div>
 
     </main>
 
@@ -42,4 +62,5 @@
     <script src="{{ url_for('static', filename='js/filters.js') }}"></script>
 
 </body>
+
 </html>

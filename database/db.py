@@ -25,16 +25,20 @@ class Database:
             print(f"Error connecting to DB: {e}")
             return None
 
-    def execute_query(self, sql_query):
-        """Hàm nhận chuỗi SQL thô và trả về dữ liệu"""
+    def execute_query(self, sql_query, params=None): # <--- Thêm params=None
+        """Hàm nhận chuỗi SQL và tham số (nếu có)"""
         conn = self.get_connection()
         if not conn:
             return []
         
         try:
-            # dictionary=True giúp trả về {'ShopName': 'ABC'} thay vì tuple ('ABC',)
-            cursor = conn.cursor(dictionary=True) 
-            cursor.execute(sql_query)
+            cursor = conn.cursor(dictionary=True)
+            
+            if params:
+                cursor.execute(sql_query, params) # <--- Truyền params vào đây
+            else:
+                cursor.execute(sql_query)
+                
             result = cursor.fetchall()
             cursor.close()
             conn.close()

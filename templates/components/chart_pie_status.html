@@ -1,0 +1,67 @@
+<div class="chart-container">
+    <h3 class="chart-title">Trạng Thái Đơn Hàng</h3>
+    
+    <div class="chart-body">
+        
+        <div class="donut-wrapper">
+            <canvas id="statusChart"></canvas>
+            
+            <div id="centerText" class="center-text">
+                <div class="center-label">Tổng đơn</div>
+                {% set total_orders = pie_data | sum %}
+                <div class="center-value">
+                    {{ "{:,.0f}".format(total_orders) }}
+                </div>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="minimal-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>StatusName</th>
+                        <th style="text-align: right;">Đơn Hàng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set max_val = pie_data | max if pie_data else 1 %}
+                    
+                    {% for row in raw_status %}
+                    <tr>
+                        <td class="col-index">{{ loop.index }}.</td>
+                        <td class="col-name">{{ row.StatusName }}</td>
+                        
+                        <td class="col-value">
+                            {% set percent = (row.Orders / max_val) * 100 %}
+                            
+                            <div class="data-bar" style="width: {{ percent }}%;"></div>
+                            
+                            <span class="value-text">
+                                {{ "{:,.0f}".format(row.Orders) }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2" class="table-footer-label">Grand total</td>
+                        <td class="table-footer-value">
+                            {{ "{:,.0f}".format(total_orders) }}
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/chart_pie.js') }}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const labels = {{ pie_labels | tojson }};
+        const data = {{ pie_data | tojson }};
+        initPieChart(labels, data, 'centerText', {{ total_orders }});
+    });
+</script>

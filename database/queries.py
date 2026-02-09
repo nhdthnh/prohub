@@ -47,3 +47,125 @@ class QueryManager:
                 filters[key] = []
 
         return filters
+    
+    def get_revenue(self, start_date, end_date):
+        """Tính doanh thu theo khoảng thời gian"""
+        
+        # 1. Xử lý thời gian để lấy trọn vẹn ngày
+        # Ví dụ: start='2026-02-08' -> '2026-02-08 00:00:00'
+        #        end='2026-02-08'   -> '2026-02-08 23:59:59'
+        start_full = f"{start_date} 00:00:00"
+        end_full = f"{end_date} 23:59:59"
+
+        sql = self._load_sql('get_Revenue_Order_AOV.sql')
+        if sql:
+            # Truyền start_full và end_full vào query
+            result = self.db.execute_query(sql, (start_full, end_full))
+            
+            if result and result[0]['Revenue']:
+                return result[0]['Revenue']
+        return 0
+    
+
+    def get_orders(self, start_date, end_date):
+        """Tính doanh thu theo khoảng thời gian"""
+        
+        # 1. Xử lý thời gian để lấy trọn vẹn ngày
+        # Ví dụ: start='2026-02-08' -> '2026-02-08 00:00:00'
+        #        end='2026-02-08'   -> '2026-02-08 23:59:59'
+        start_full = f"{start_date} 00:00:00"
+        end_full = f"{end_date} 23:59:59"
+
+        sql = self._load_sql('get_Revenue_Order_AOV.sql')
+        if sql:
+            # Truyền start_full và end_full vào query
+            result = self.db.execute_query(sql, (start_full, end_full))
+            
+            if result and result[0]['Orders']:
+                return result[0]['Orders']
+        return 0
+    
+
+    def get_orders(self, start_date, end_date):
+        """Tính doanh thu theo khoảng thời gian"""
+        
+        # 1. Xử lý thời gian để lấy trọn vẹn ngày
+        # Ví dụ: start='2026-02-08' -> '2026-02-08 00:00:00'
+        #        end='2026-02-08'   -> '2026-02-08 23:59:59'
+        start_full = f"{start_date} 00:00:00"
+        end_full = f"{end_date} 23:59:59"
+
+        sql = self._load_sql('get_Revenue_Order_AOV.sql')
+        if sql:
+            # Truyền start_full và end_full vào query
+            result = self.db.execute_query(sql, (start_full, end_full))
+            
+            if result and result[0]['Orders']:
+                return result[0]['Orders']
+        return 0
+    
+    def get_quantity(self, start_date, end_date):
+        """Tính doanh thu theo khoảng thời gian"""
+        
+        # 1. Xử lý thời gian để lấy trọn vẹn ngày
+        # Ví dụ: start='2026-02-08' -> '2026-02-08 00:00:00'
+        #        end='2026-02-08'   -> '2026-02-08 23:59:59'
+        start_full = f"{start_date} 00:00:00"
+        end_full = f"{end_date} 23:59:59"
+
+        sql = self._load_sql('get_Quantity.sql')
+        if sql:
+            # Truyền start_full và end_full vào query
+            result = self.db.execute_query(sql, (start_full, end_full))
+            
+            if result and result[0]['Quantity']:
+                return result[0]['Quantity']
+        return 0
+    
+
+    def get_AOV(self, start_date, end_date):
+        """Tính doanh thu theo khoảng thời gian"""
+        
+        # 1. Xử lý thời gian để lấy trọn vẹn ngày
+        # Ví dụ: start='2026-02-08' -> '2026-02-08 00:00:00'
+        #        end='2026-02-08'   -> '2026-02-08 23:59:59'
+        start_full = f"{start_date} 00:00:00"
+        end_full = f"{end_date} 23:59:59"
+
+        sql = self._load_sql('get_Revenue_Order_AOV.sql')
+        if sql:
+            # Truyền start_full và end_full vào query
+            result = self.db.execute_query(sql, (start_full, end_full))
+            
+            if result and result[0]['AOV']:
+                return result[0]['AOV']
+        return 0
+    
+    def get_hourly_trend(self, start_date, end_date):
+        # 1. Xử lý full ngày giờ (như bước trước)
+        start_full = f"{start_date} 00:00:00"
+        end_full = f"{end_date} 23:59:59"
+        
+        sql = self._load_sql('get_Hourly_Trend.sql')
+        if sql:
+            return self.db.execute_query(sql, (start_full, end_full))
+        return []
+    
+    def get_order_status(self, start_date, end_date):
+        # Xử lý full ngày giờ
+        start_full = f"{start_date} 00:00:00"
+        end_full = f"{end_date} 23:59:59"
+        
+        sql = self._load_sql('get_OrderStatus.sql')
+        if sql:
+            return self.db.execute_query(sql, (start_full, end_full))
+        return []
+    
+    def get_province_data(self, start_date, end_date):
+        start_full = f"{start_date} 00:00:00"
+        end_full = f"{end_date} 23:59:59"
+        
+        sql = self._load_sql('get_Province.sql')
+        if sql:
+            return self.db.execute_query(sql, (start_full, end_full))
+        return []

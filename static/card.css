@@ -1,0 +1,62 @@
+/* Container chứa các card */
+.dashboard-stats {
+    padding: 20px 30px;
+    display: flex;
+    gap: 20px;
+}
+
+/* Style cho từng Card */
+.kpi-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    min-width: 250px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    
+    /* Tạo viền gradient giống ảnh (Purple/Pink) */
+    position: relative;
+    border: 1px solid transparent;
+    background-clip: padding-box;
+}
+
+/* Hiệu ứng viền gradient (giả lập border gradient) */
+.kpi-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    padding: 2px; /* Độ dày viền */
+    background: linear-gradient(45deg, #a855f7, #ec4899); /* Tím sang Hồng */
+    -webkit-mask: 
+       linear-gradient(#fff 0 0) content-box, 
+       linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+.card-label {
+    font-size: 14px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.card-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 10px 0 5px 0;
+    font-family: 'Inter', sans-serif;
+}
+
+.card-trend {
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 600;
+}
+
+.card-trend.positive {
+    color: #22c55e; /* Màu xanh lá */
+}

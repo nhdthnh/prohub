@@ -1,0 +1,21 @@
+<div class="chart-container">
+    <h3 class="chart-title">Biểu đồ Doanh thu & Đơn hàng theo giờ</h3>
+    
+    <div class="line-chart-wrapper">
+        <canvas id="revenueChart"></canvas>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/chart_line.js') }}"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Lấy dữ liệu từ Python (Server-side)
+        const labels = {{ chart_labels | tojson }};
+        const revenue = {{ chart_revenue | tojson }};
+        const orders = {{ chart_orders | tojson }};
+        
+        // Gọi hàm từ file js/chart_line.js
+        initDualAxisChart(labels, revenue, orders);
+    });
+</script>
