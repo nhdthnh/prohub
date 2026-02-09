@@ -6,3 +6,11 @@ function toggleGroup(headerElement) {
     const group = headerElement.parentElement;
     group.classList.toggle('collapsed');
 }
+
+/**
+ * Hàm xử lý thu gọn / mở rộng Sidebar
+ */
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    sidebar.classList.toggle('collapsed');
+}

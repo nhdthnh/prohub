@@ -1,6 +1,6 @@
 # database/queries.py
 import os
-
+from datetime import datetime, timedelta
 class QueryManager:
     def __init__(self, db):
         self.db = db
@@ -17,7 +17,7 @@ class QueryManager:
         self.query_folder = os.path.normpath(os.path.join(database_dir, '..', 'query'))
         
         # Debug: In ra để kiểm tra
-        print(f"📂 Folder Query chuẩn: {self.query_folder}")
+        # print(f"📂 Folder Query chuẩn: {self.query_folder}")
 
     def _load_sql(self, filename):
         path = os.path.join(self.query_folder, filename)
@@ -169,3 +169,59 @@ class QueryManager:
         if sql:
             return self.db.execute_query(sql, (start_full, end_full))
         return []
+    
+    def get_kpi_growth(self, start_date_str, end_date_str):
+        # 1. Tính toán ngày tháng
+        fmt = '%Y-%m-%d'
+        try:
+            curr_start = datetime.strptime(start_date_str, fmt)
+            curr_end = datetime.strptime(end_date_str, fmt)
+        except ValueError:
+            return None # Trả về None nếu lỗi ngày
+
+        # Độ dài chu kỳ (delta)
+        delta = curr_end - curr_start
+        
+        # Ngày của kỳ trước (Previous Period)
+        prev_end = curr_start - timedelta(days=1)
+        prev_start = prev_end - delta
+
+        # Chuyển thành string full time
+        p_curr_start = f"{curr_start.strftime(fmt)} 00:00:00"
+        p_curr_end = f"{curr_end.strftime(fmt)} 23:59:59"
+        
+        p_prev_start = f"{prev_start.strftime(fmt)} 00:00:00"
+        p_prev_end = f"{prev_end.strftime(fmt)} 23:59:59"
+        
+        # Range bao trùm cả 2 kỳ (để tối ưu WHERE)
+        p_total_start = p_prev_start
+        p_total_end = p_curr_end
+
+        # Load file SQL mới (Xem Bước 2 bên dưới)
+        sql = self._load_sql('get_KPI_Growth.sql')
+        
+        if sql:
+            # Thứ tự tham số truyền vào SQL
+            params = (
+                p_curr_start, p_curr_end,  # Current
+                p_curr_start, p_curr_end,
+                p_curr_start, p_curr_end,
+                
+                p_prev_start, p_prev_end,  # Previous
+                p_prev_start, p_prev_end,
+                p_prev_start, p_prev_end,
+                
+                p_total_start, p_total_end # WHERE
+            )
+            
+            result = self.db.execute_query(sql, params)
+            if result:
+                return result[0] # Trả về dict chứa tất cả số liệu
+        
+        # Mặc định trả về 0 hết nếu lỗi
+        return {
+            'Revenue': 0, 'RevenueGrowth': 0,
+            'Orders': 0, 'OrdersGrowth': 0,
+            'Quantity': 0, 'QuantityGrowth': 0,
+            'AOV': 0, 'AovGrowth': 0
+        }

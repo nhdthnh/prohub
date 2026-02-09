@@ -1,56 +1,57 @@
 <div class="kpi-card">
-    <div class="card-header">
-        <span class="card-label">Doanh Số</span>
-    </div>
+    <div class="card-header"><span class="card-label">Doanh Số</span></div>
     <div class="card-body">
-        <h2 class="card-value">{{ "{:,.0f}".format(revenue) }}</h2>
-        
-        <div class="card-trend positive">
-            <i class="fa-solid fa-arrow-up"></i>
-            <span>0.1%</span>
-        </div>
+        <h2 class="card-value">{{ "{:,.0f}".format(kpi.Revenue) }}</h2>
+        {% if kpi.RevenueGrowth > 0 %}
+            <div class="card-trend positive"><i class="fa-solid fa-arrow-up"></i> {{ "{:.1f}".format(kpi.RevenueGrowth) }}%</div>
+        {% elif kpi.RevenueGrowth < 0 %}
+            <div class="card-trend negative"><i class="fa-solid fa-arrow-down"></i> {{ "{:.1f}".format(kpi.RevenueGrowth | abs) }}%</div>
+        {% else %}
+            <div class="card-trend neutral">- 0.0%</div>
+        {% endif %}
     </div>
 </div>
 
 <div class="kpi-card">
-    <div class="card-header">
-        <span class="card-label">Số đơn</span>
-    </div>
+    <div class="card-header"><span class="card-label">Số đơn</span></div>
     <div class="card-body">
-        <h2 class="card-value">{{ "{:,.0f}".format(orders) }}</h2>
-        
-        <div class="card-trend positive">
-            <i class="fa-solid fa-arrow-up"></i>
-            <span>0.1%</span>
-        </div>
-    </div>
-</div>
-
-
-<div class="kpi-card">
-    <div class="card-header">
-        <span class="card-label">Số lượng</span>
-    </div>
-    <div class="card-body">
-        <h2 class="card-value">{{ "{:,.0f}".format(quantity) }}</h2>
-        
-        <div class="card-trend positive">
-            <i class="fa-solid fa-arrow-up"></i>
-            <span>0.1%</span>
-        </div>
+        <h2 class="card-value">{{ "{:,.0f}".format(kpi.Orders) }}</h2>
+        {% if kpi.OrdersGrowth > 0 %}
+            <div class="card-trend positive"><i class="fa-solid fa-arrow-up"></i> {{ "{:.1f}".format(kpi.OrdersGrowth) }}%</div>
+        {% elif kpi.OrdersGrowth < 0 %}
+            <div class="card-trend negative"><i class="fa-solid fa-arrow-down"></i> {{ "{:.1f}".format(kpi.OrdersGrowth | abs) }}%</div>
+        {% else %}
+            <div class="card-trend neutral">- 0.0%</div>
+        {% endif %}
     </div>
 </div>
 
 <div class="kpi-card">
-    <div class="card-header">
-        <span class="card-label">AOV</span>
-    </div>
+    <div class="card-header"><span class="card-label">Số lượng</span></div>
     <div class="card-body">
-        <h2 class="card-value">{{ "{:,.0f}".format(AOV) }}</h2>
+        <h2 class="card-value">{{ "{:,.0f}".format(kpi.Quantity) }}</h2>
         
-        <div class="card-trend positive">
-            <i class="fa-solid fa-arrow-up"></i>
-            <span>0.1%</span>
-        </div>
+        {% if kpi.QuantityGrowth > 0 %}
+            <div class="card-trend positive"><i class="fa-solid fa-arrow-up"></i> {{ "{:.1f}".format(kpi.QuantityGrowth) }}%</div>
+        {% elif kpi.QuantityGrowth < 0 %}
+            <div class="card-trend negative"><i class="fa-solid fa-arrow-down"></i> {{ "{:.1f}".format(kpi.QuantityGrowth | abs) }}%</div>
+        {% else %}
+            <div class="card-trend neutral">- 0.0%</div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="kpi-card">
+    <div class="card-header"><span class="card-label">AOV</span></div>
+    <div class="card-body">
+        <h2 class="card-value">{{ "{:,.0f}".format(kpi.AOV) }}</h2>
+        
+        {% if kpi.AovGrowth > 0 %}
+            <div class="card-trend positive"><i class="fa-solid fa-arrow-up"></i> {{ "{:.1f}".format(kpi.AovGrowth) }}%</div>
+        {% elif kpi.AovGrowth < 0 %}
+            <div class="card-trend negative"><i class="fa-solid fa-arrow-down"></i> {{ "{:.1f}".format(kpi.AovGrowth | abs) }}%</div>
+        {% else %}
+            <div class="card-trend neutral">- 0.0%</div>
+        {% endif %}
     </div>
 </div>

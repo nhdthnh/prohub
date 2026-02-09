@@ -12,7 +12,8 @@
     overflow-y: auto;
     padding-top: 20px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-    flex-shrink: 0; /* Không cho sidebar co lại */
+    flex-shrink: 0;
+    /* Không cho sidebar co lại */
     z-index: 10;
 }
 
@@ -56,7 +57,8 @@
     list-style: none;
     overflow: hidden;
     transition: max-height 0.3s ease-out;
-    max-height: 500px; /* Mở mặc định */
+    max-height: 500px;
+    /* Mở mặc định */
 }
 
 .nav-item {
@@ -65,7 +67,8 @@
     color: var(--text-color);
     font-size: 13.5px;
     font-weight: 500;
-    padding: 10px 15px 10px 52px; /* Thụt đầu dòng */
+    padding: 10px 15px 10px 52px;
+    /* Thụt đầu dòng */
     transition: all 0.2s;
 }
 
@@ -111,4 +114,47 @@
 
 .nav-group.collapsed .arrow-icon {
     transform: rotate(-90deg);
+}
+
+/* =========================================
+   3. COLLAPSED SIDEBAR (Thu gọn)
+   ========================================= */
+.sidebar.collapsed {
+    width: 60px;
+}
+
+/* Ẩn text khi thu gọn */
+.sidebar.collapsed .nav-group-header span,
+.sidebar.collapsed .nav-single-item span,
+.sidebar.collapsed .nav-group-header .arrow-icon {
+    display: none;
+}
+
+/* Ẩn luôn list con khi thu gọn (để tránh lòi ra ngoài) */
+.sidebar.collapsed .nav-list {
+    display: none !important;
+}
+
+/* Căn giữa icon chính */
+.sidebar.collapsed .nav-group-header,
+.sidebar.collapsed .nav-single-item {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.sidebar.collapsed .nav-group-header .main-icon,
+.sidebar.collapsed .nav-single-item i {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+/* Điều chỉnh header/brand khi thu gọn */
+.sidebar.collapsed .sidebar-brand {
+    justify-content: center;
+}
+
+/* Animation Transition for Sidebar */
+.sidebar {
+    transition: width 0.1s ease;
 }
