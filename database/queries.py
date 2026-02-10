@@ -294,3 +294,79 @@ class QueryManager:
             'categories': sorted_brands, # Trục tung
             'series': series_data        # Dữ liệu
         }
+    
+
+    def get_brand_performance(self, start_date_str, end_date_str, filter_dict=None):
+        """
+        Lấy hiệu suất Brand (Doanh thu, Đơn hàng) so sánh kỳ này vs kỳ trước.
+        Mapping với file SQL: query/get_Brand_Performance.sql
+        """
+        # 1. Parsing ngày tháng từ String sang Datetime
+        fmt = '%Y-%m-%d'
+        try:
+            curr_start = datetime.strptime(start_date_str, fmt)
+            curr_end = datetime.strptime(end_date_str, fmt)
+        except ValueError:
+            print(f"Lỗi định dạng ngày tháng: {start_date_str} - {end_date_str}")
+            return []
+
+        # 2. Tính toán kỳ trước (Previous Period)
+        # Logic: Nếu kỳ này là 10 ngày, thì kỳ trước là 10 ngày ngay trước đó.
+        duration = curr_end - curr_start
+        prev_end = curr_start - timedelta(days=1)
+        prev_start = prev_end - duration
+
+        # 3. Format lại thành String chuẩn SQL (YYYY-MM-DD HH:MM:SS)
+        p_curr_start = f"{curr_start.strftime(fmt)} 00:00:00"
+        p_curr_end = f"{curr_end.strftime(fmt)} 23:59:59"
+        
+        p_prev_start = f"{prev_start.strftime(fmt)} 00:00:00"
+        p_prev_end = f"{prev_end.strftime(fmt)} 23:59:59"
+
+        # Range Tổng cho mệnh đề WHERE (Quét từ ngày thấp nhất của kỳ trước -> ngày cao nhất của kỳ này)
+        # Để tối ưu DB không phải quét toàn bộ bảng
+        p_total_start = p_prev_start
+        p_total_end = p_curr_end
+
+        # 4. Xử lý Filters (Brand, Shop, Platform, Status...)
+        # Hàm _build_filter_clause trả về chuỗi SQL 'AND ...' và list params tương ứng
+        filter_sql, filter_params = self._build_filter_clause(filter_dict)
+
+        # 5. Chuẩn bị danh sách tham số (Params)
+        # Thứ tự này PHẢI KHỚP 100% với các dấu %s trong file get_Brand_Performance.sql
+        params = [
+            # Cặp 1: Current Revenue (SUM CASE WHEN...)
+            p_curr_start, p_curr_end,
+            
+            # Cặp 2: Current Orders (COUNT CASE WHEN...)
+            p_curr_start, p_curr_end,
+            
+            # Cặp 3: Previous Revenue (SUM CASE WHEN...)
+            p_prev_start, p_prev_end,
+            
+            # Cặp 4: Previous Orders (COUNT CASE WHEN...)
+            p_prev_start, p_prev_end,
+            
+            # Cặp 5: WHERE clause (CreatedTime BETWEEN...)
+            p_total_start, p_total_end
+        ]
+        
+        # Nối thêm tham số của bộ lọc vào cuối
+        if filter_params:
+            params.extend(filter_params)
+
+        # 6. Load và Thực thi SQL
+        sql = self._load_sql('get_Brand_Performance.sql')
+        if not sql:
+            return []
+        
+        try:
+            # Format chuỗi SQL để chèn đoạn AND filters vào placeholder {filters}
+            final_sql = sql.format(filters=filter_sql)
+            
+            # Gọi hàm execute_query của class Database
+            return self.db.execute_query(final_sql, tuple(params))
+            
+        except Exception as e:
+            print(f"Error executing get_brand_performance: {e}")
+            return []

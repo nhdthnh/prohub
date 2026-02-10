@@ -27,14 +27,15 @@
     <div class="filter-item-wrapper">
         <select multiple name="status" id="status-select" placeholder="StatusName" data-search="true" data-silent-initial-value-set="true">
             {% for item in filters.statuses %}
-                <option value="{{ item.StatusName }}" selected>{{ item.StatusName }}</option>
+                <option value="{{ item.StatusName }}">{{ item.StatusName }}</option>
             {% endfor %}
         </select>
     </div>
 
-     <button id="btn-apply-filter" class="btn-filter">
+    <button id="btn-apply-filter" class="btn-filter">
         <i class="fa-solid fa-filter"></i> Lọc dữ liệu
     </button>
+    
     <button id="btn-reset-filter" class="btn-reset disabled" disabled>
         <i class="fa-solid fa-rotate-left"></i> Xóa lọc
     </button>
