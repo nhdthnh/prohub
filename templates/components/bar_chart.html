@@ -1,0 +1,14 @@
+<div class="chart-container">
+    <div id="brandPlatformChart" style="height: 500px;"></div>
+</div>
+<script src="{{ url_for('static', filename='js/bar_chart.js') }}"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Dữ liệu từ Python trả về
+        const brandData = {{ raw_brand_platform | tojson }};
+        
+        // Gọi hàm vẽ
+        initBrandPlatformChart(brandData);
+    });
+</script>

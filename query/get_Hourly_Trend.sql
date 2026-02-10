@@ -1,13 +1,16 @@
 SELECT 
-	HOUR(o.CreatedTime) as HOURNUM, 
-    COUNT(DISTINCT o.OmisellOrderNumber) AS Orders,
-    SUM((c.OriginalPrice - c.DiscountSeller - c.VoucherSeller) * c.Quantity) AS Revenue
-FROM
-    orders o 
-    LEFT JOIN catalogueitems c ON c.OmisellOrderNumber = o.OmisellOrderNumber 
-    LEFT JOIN status st ON st.StatusID = o.StatusId
-    LEFT JOIN platforms p2 ON p2.Platform = o.Platform
-    LEFT JOIN shops s2 ON s2.ShopId = o.ShopId
+    HOUR(CreatedTime) as HOURNUM,
+    COUNT(DISTINCT OmisellOrderNumber) as Orders,
+    /* Tính doanh thu trực tiếp từ các cột có trong View */
+    SUM((OriginalPrice - DiscountSeller - VoucherSeller) * Quantity) as Revenue
+FROM 
+    omisell_catalogue
+    
 WHERE 
-    o.CreatedTime BETWEEN %s AND %s
-GROUP BY HOUR(o.CreatedTime);
+    CreatedTime BETWEEN %s AND %s
+    {filters}  /* Python sẽ điền: AND ShopName IN (...) */
+
+GROUP BY 
+    HOUR(CreatedTime)
+ORDER BY 
+    HOURNUM ASC;

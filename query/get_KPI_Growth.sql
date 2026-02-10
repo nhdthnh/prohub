@@ -1,8 +1,11 @@
 SELECT 
-    /* --- 1. SỐ LIỆU HIỆN TẠI (Hiển thị to) --- */
+    /* --- 1. SỐ LIỆU HIỆN TẠI --- */
     T.CurrRevenue AS Revenue,
     T.CurrOrders AS Orders,
-    T.CurrQty AS Quantity,
+    /* Quantity đã lấy ở query khác nên để null hoặc 0 ở đây cũng được, 
+       Python sẽ merge đè lên sau. */
+    0 AS Quantity, 
+    
     CASE WHEN T.CurrOrders = 0 THEN 0 ELSE T.CurrRevenue / T.CurrOrders END AS AOV,
 
     /* --- 2. TÍNH % TĂNG TRƯỞNG (GROWTH) --- */
@@ -21,12 +24,8 @@ SELECT
         ELSE ((T.CurrOrders - T.PrevOrders) / T.PrevOrders) * 100
     END AS OrdersGrowth,
     
-    /* Quantity Growth */
-    CASE 
-        WHEN T.PrevQty = 0 AND T.CurrQty > 0 THEN 100
-        WHEN T.PrevQty = 0 THEN 0
-        ELSE ((T.CurrQty - T.PrevQty) / T.PrevQty) * 100
-    END AS QuantityGrowth,
+    /* Quantity Growth (Python sẽ tự xử lý, ở đây trả về 0) */
+    0 AS QuantityGrowth,
 
     /* AOV Growth */
     CASE 
@@ -39,20 +38,25 @@ SELECT
 
 FROM (
     SELECT 
-        /* === KỲ HIỆN TẠI (3 dòng đầu) === */
-        SUM(CASE WHEN o.CreatedTime BETWEEN %s AND %s THEN (c.OriginalPrice - c.DiscountSeller - c.VoucherSeller) * c.Quantity ELSE 0 END) AS CurrRevenue,
-        COUNT(DISTINCT CASE WHEN o.CreatedTime BETWEEN %s AND %s THEN o.OmisellOrderNumber END) AS CurrOrders,
-        SUM(CASE WHEN o.CreatedTime BETWEEN %s AND %s THEN c.Quantity ELSE 0 END) AS CurrQty,
-
-        /* === KỲ TRƯỚC (3 dòng sau) === */
-        SUM(CASE WHEN o.CreatedTime BETWEEN %s AND %s THEN (c.OriginalPrice - c.DiscountSeller - c.VoucherSeller) * c.Quantity ELSE 0 END) AS PrevRevenue,
-        COUNT(DISTINCT CASE WHEN o.CreatedTime BETWEEN %s AND %s THEN o.OmisellOrderNumber END) AS PrevOrders,
-        SUM(CASE WHEN o.CreatedTime BETWEEN %s AND %s THEN c.Quantity ELSE 0 END) AS PrevQty
+        /* === KỲ HIỆN TẠI === */
+        /* Param 1, 2: Doanh thu hiện tại */
+        SUM(CASE WHEN CreatedTime BETWEEN %s AND %s THEN (OriginalPrice - DiscountSeller - VoucherSeller) * Quantity ELSE 0 END) AS CurrRevenue,
+        
+        /* Param 3, 4: Số đơn hiện tại */
+        COUNT(DISTINCT CASE WHEN CreatedTime BETWEEN %s AND %s THEN OmisellOrderNumber END) AS CurrOrders,
+        
+        /* === KỲ TRƯỚC === */
+        /* Param 5, 6: Doanh thu kỳ trước */
+        SUM(CASE WHEN CreatedTime BETWEEN %s AND %s THEN (OriginalPrice - DiscountSeller - VoucherSeller) * Quantity ELSE 0 END) AS PrevRevenue,
+        
+        /* Param 7, 8: Số đơn kỳ trước */
+        COUNT(DISTINCT CASE WHEN CreatedTime BETWEEN %s AND %s THEN OmisellOrderNumber END) AS PrevOrders
 
     FROM
-        orders o 
-        LEFT JOIN catalogueitems c ON c.OmisellOrderNumber = o.OmisellOrderNumber 
-        /* Join thêm các bảng khác nếu cần lọc filter brand/shop... */
+        omisell_catalogue
+        
     WHERE 
-        o.CreatedTime BETWEEN %s AND %s
+        /* Param 9, 10: Range tổng cho WHERE */
+        CreatedTime BETWEEN %s AND %s
+        {filters}
 ) AS T;

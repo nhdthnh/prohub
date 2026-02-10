@@ -1,12 +1,26 @@
-/* query/get_Revenue.sql */
 SELECT 
-    SUM(i.`quantity`) as `Quantity`
-FROM
-    inventoryitems i 
-    LEFT JOIN orders o ON i.OmisellOrderNumber = o.OmisellOrderNumber
-    LEFT JOIN product p ON p.sku = i.CatalogueSKU
-    LEFT JOIN status st ON st.StatusID = o.StatusId
-    LEFT JOIN platforms p2 ON p2.Platform = o.Platform
-    LEFT JOIN shops s2 ON s2.ShopId = o.ShopId
-WHERE 
-    o.CreatedTime BETWEEN %s AND %s
+    T.CurrQty AS Quantity,
+    T.PrevQty AS PreviousQuantity,
+    
+    /* Tính % Tăng trưởng ngay trong SQL */
+    CASE 
+        WHEN T.PrevQty = 0 AND T.CurrQty > 0 THEN 100
+        WHEN T.PrevQty = 0 THEN 0
+        ELSE ((T.CurrQty - T.PrevQty) / T.PrevQty) * 100
+    END AS QuantityGrowth
+
+FROM (
+    SELECT 
+        /* Tính Tổng Kỳ Hiện Tại */
+        SUM(CASE WHEN CreatedTime BETWEEN %s AND %s THEN Quantity ELSE 0 END) AS CurrQty,
+        
+        /* Tính Tổng Kỳ Trước */
+        SUM(CASE WHEN CreatedTime BETWEEN %s AND %s THEN Quantity ELSE 0 END) AS PrevQty
+
+    FROM 
+        omisell_inventory
+    WHERE 
+        /* Lọc khoảng thời gian bao trùm cả 2 kỳ (để tối ưu Index) */
+        CreatedTime BETWEEN %s AND %s
+        {filters}
+) AS T;

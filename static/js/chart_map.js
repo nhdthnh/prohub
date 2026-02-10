@@ -1,119 +1,145 @@
 function initVietnamMap(dbData) {
-    // 1. Bảng Mapping: Tên trong DB -> Mã Highcharts (vn-xxx)
-    // (Phần này giữ nguyên như cũ, chỉ rút gọn để dễ nhìn)
+    // 1. Mapping (Giữ nguyên như cũ)
     const provinceMapping = {
-        "Hồ Chí Minh": "vn-hc", "TP. Hồ Chí Minh": "vn-hc", "Ho Chi Minh City": "vn-hc",
-        "Hà Nội": "vn-hn", "TP. Hà Nội": "vn-hn", "Ha Noi": "vn-hn", "Hanoi": "vn-hn",
-        "Đà Nẵng": "vn-da", "TP. Đà Nẵng": "vn-da",
-        "Bình Dương": "vn-bi", "Đồng Nai": "vn-dn", "Hải Phòng": "vn-hp",
-        "Nghệ An": "vn-na", "Thanh Hóa": "vn-th", "Bắc Ninh": "vn-bn",
-        "Khánh Hòa": "vn-kh", "Lâm Đồng": "vn-ld", "Quảng Ninh": "vn-qn",
-        "Bà Rịa - Vũng Tàu": "vn-bv", "Vũng Tàu": "vn-bv", "Nam Định": "vn-nd",
-        "Hải Dương": "vn-hd", "Hưng Yên": "vn-hy", "Thái Bình": "vn-tb",
-        "Tiền Giang": "vn-tg", "Cần Thơ": "vn-ct", "Đắk Lắk": "vn-dl",
-        "Bình Định": "vn-bj", "Vĩnh Phúc": "vn-vp", "Long An": "vn-307",
-        "Quảng Nam": "vn-qa", "Phú Thọ": "vn-pt", "Thái Nguyên": "vn-ty",
-        "Bắc Giang": "vn-bg", "Bình Thuận": "vn-bt", "An Giang": "vn-ag",
-        "Kiên Giang": "vn-kg", "Hà Nam": "vn-hm", "Tây Ninh": "vn-tn",
-        "Bến Tre": "vn-br", "Quảng Ngãi": "vn-qg", "Đồng Tháp": "vn-dt",
-        "Ninh Bình": "vn-nb", "Bình Phước": "vn-bp", "Hà Tĩnh": "vn-ht",
-        "Cà Mau": "vn-cm", "Vĩnh Long": "vn-vl", "Trà Vinh": "vn-tv",
-        "Sóc Trăng": "vn-st", "Bạc Liêu": "vn-bl", "Hậu Giang": "vn-hg",
-        "Ninh Thuận": "vn-nt", "Phú Yên": "vn-py", "Gia Lai": "vn-gl",
-        "Lào Cai": "vn-lc", "Lạng Sơn": "vn-ls", "Quảng Bình": "vn-qb",
-        "Quảng Trị": "vn-qt", "Thừa Thiên Huế": "vn-tt", "Huế": "vn-tt",
-        "Yên Bái": "vn-yb", "Sơn La": "vn-sl", "Hòa Bình": "vn-ho",
-        "Tuyên Quang": "vn-tq", "Hà Giang": "vn-hg", "Cao Bằng": "vn-cb",
-        "Lai Châu": "vn-lc", "Điện Biên": "vn-db", "Đắk Nông": "vn-da",
-        "Kon Tum": "vn-kt"
+        "hồ chí minh": "vn-hc", "tp. hồ chí minh": "vn-hc", "ho chi minh city": "vn-hc", "tphcm": "vn-hc",
+        "hà nội": "vn-hn", "tp. hà nội": "vn-hn", "ha noi": "vn-hn", "hanoi": "vn-hn",
+        "đà nẵng": "vn-da", "tp. đà nẵng": "vn-da",
+        "bình dương": "vn-bi", "đồng nai": "vn-dn", "hải phòng": "vn-hp",
+        "nghệ an": "vn-na", "thanh hóa": "vn-th", "bắc ninh": "vn-bn",
+        "khánh hòa": "vn-kh", "lâm đồng": "vn-ld", "quảng ninh": "vn-qn",
+        "bà rịa - vũng tàu": "vn-bv", "vũng tàu": "vn-bv", "nam định": "vn-nd",
+        "hải dương": "vn-hd", "hưng yên": "vn-hy", "thái bình": "vn-tb",
+        "tiền giang": "vn-tg", "cần thơ": "vn-ct", "đắk lắk": "vn-dl", "dak lak": "vn-dl",
+        "bình định": "vn-bj", "vĩnh phúc": "vn-vp", "long an": "vn-307",
+        "quảng nam": "vn-qa", "phú thọ": "vn-pt", "thái nguyên": "vn-ty",
+        "bắc giang": "vn-bg", "bình thuận": "vn-bt", "an giang": "vn-ag",
+        "kiên giang": "vn-kg", "hà nam": "vn-hm", "tây ninh": "vn-tn",
+        "bến tre": "vn-br", "quảng ngãi": "vn-qg", "đồng tháp": "vn-dt",
+        "ninh bình": "vn-nb", "bình phước": "vn-bp", "hà tĩnh": "vn-ht",
+        "cà mau": "vn-cm", "vĩnh long": "vn-vl", "trà vinh": "vn-tv",
+        "sóc trăng": "vn-st", "bạc liêu": "vn-bl", "hậu giang": "vn-hg",
+        "ninh thuận": "vn-nt", "phú yên": "vn-py", "gia lai": "vn-gl",
+        "lào cai": "vn-lc", "lạng sơn": "vn-ls", "quảng bình": "vn-qb",
+        "quảng trị": "vn-qt", "thừa thiên huế": "vn-tt", "huế": "vn-tt",
+        "yên bái": "vn-yb", "sơn la": "vn-sl", "hòa bình": "vn-ho",
+        "tuyên quang": "vn-tq", "hà giang": "vn-hg", "cao bằng": "vn-cb",
+        "lai châu": "vn-lc", "điện biên": "vn-db", "đắk nông": "vn-da", "dak nong": "vn-da",
+        "kon tum": "vn-kt"
     };
 
-    // 2. Xử lý dữ liệu (CÓ THAY ĐỔI QUAN TRỌNG)
     let tempMapData = [];
-    
+    let maxValue = 0;
+
+    // 2. Xử lý dữ liệu
     dbData.forEach(item => {
-        let provinceName = item.ProvinceName;
-        if (provinceName) {
-            provinceName = provinceName.trim();
-            let mapKey = provinceMapping[provinceName];
+        let rawName = item.Province || item.ProvinceName; 
+        if (rawName) {
+            let normalizedName = rawName.toString().trim().toLowerCase();
+            let mapKey = provinceMapping[normalizedName];
             
             if (mapKey) {
-                // Thay vì đẩy mảng [key, value], ta đẩy Object để dễ config sau này
+                let val = parseInt(item.Orders);
+                if (val > maxValue) maxValue = val;
+
                 tempMapData.push({
                     'hc-key': mapKey,
-                    value: item.Orders,
-                    name: provinceName // Lưu lại tên gốc để hiển thị tooltip nếu cần
+                    value: val,
+                    name: rawName
                 });
             }
         }
     });
 
-    // --- LOGIC MỚI: Sắp xếp và chỉ hiện Label cho Top 10 ---
-
-    // B1: Sắp xếp giảm dần theo số lượng đơn (value)
-    // Để đảm bảo Top 10 người nhiều đơn nhất nằm đầu danh sách
+    // Sort giảm dần
     tempMapData.sort((a, b) => b.value - a.value);
 
-    // B2: Duyệt qua danh sách, Top 10 bật label, còn lại tắt
+    // Cấu hình Label (chỉ hiện Top 10)
     const finalMapData = tempMapData.map((item, index) => {
         if (index < 10) {
-            // Nếu nằm trong Top 10 (index 0 đến 9)
-            item.dataLabels = { 
-                enabled: true,
-                style: { 
-                    fontWeight: 'bold', 
-                    color: '#1e293b', // Màu chữ đậm
-                    textOutline: '1px white' // Viền trắng để dễ đọc trên nền xanh
-                },
-                // Cho phép label đè lên nhau nếu cần thiết để luôn hiển thị
-                allowOverlap: true 
-            }; 
-            // Mẹo: Đặt z-index cao để label của Top 10 nằm đè lên các vùng khác
-            item.z = 1000 - index; 
+             item.dataLabels = { 
+                 enabled: true,
+                 format: '{point.name}<br/><span style="font-size:11px; font-weight:bold">{point.value}</span>', 
+                 style: { fontWeight: 'normal', color: 'black', textOutline: '1px white', textAlign: 'center' },
+                 allowOverlap: true,
+                 y: -5
+             };
+             item.z = 1000 - index;
         } else {
-            // Các tỉnh còn lại -> Tắt tên
-            item.dataLabels = { enabled: false };
+             item.dataLabels = { enabled: false };
         }
         return item;
     });
 
-    // -------------------------------------------------------
-
-    // 3. Vẽ Map
+    // 3. Render Map
     Highcharts.mapChart('vietnamMap', {
         chart: {
             map: 'countries/vn/vn-all',
-            style: { fontFamily: 'Inter, sans-serif' }
+            style: { fontFamily: 'Inter, sans-serif' },
+            
+            // --- CẤU HÌNH AUTO ZOOM ---
+            events: {
+                load: function () {
+                    // Tìm điểm có giá trị lớn nhất (đã sort ở trên nên là phần tử đầu tiên của finalMapData)
+                    // Tuy nhiên cần tìm object Point thực tế của Highcharts để gọi hàm zoomTo
+                    const series = this.series[0];
+                    if (series.points.length > 0) {
+                        // Tìm point có value = maxValue
+                        let maxPoint = null;
+                        for (let i = 0; i < series.points.length; i++) {
+                             if (series.points[i].value === maxValue) {
+                                 maxPoint = series.points[i];
+                                 break;
+                             }
+                        }
+
+                        // Thực hiện Zoom nếu tìm thấy
+                        if (maxPoint) {
+                            maxPoint.zoomTo(); 
+                        }
+                    }
+                }
+            }
+            // --------------------------
         },
-        title: { text: '' },
-        subtitle: { text: '' },
+
+        // --- XÓA CHART TITLE ---
+        title: { text: '' }, 
+        // -----------------------
+
+        // Bật điều hướng để user có thể Zoom Out lại
         mapNavigation: {
             enabled: true,
-            buttonOptions: { verticalAlign: 'bottom' }
+            enableMouseWheelZoom: true, // Cho phép lăn chuột để zoom
+            buttonOptions: {
+                verticalAlign: 'bottom'
+            }
         },
+
         colorAxis: {
-            min: 0,
+            min: 1,
+            max: maxValue,
+            type: 'logarithmic',
             stops: [
-                [0, '#e0f2fe'],   // Màu rất nhạt
-                [0.5, '#3b82f6'], // Màu trung bình
-                [1, '#1e3a8a']    // Màu đậm
+                [0, '#fff7bc'], 
+                [0.3, '#fec44f'], 
+                [0.6, '#d95f0e'], 
+                [1, '#993404']
             ]
         },
+
         series: [{
-            data: finalMapData, // Sử dụng dữ liệu đã xử lý Top 10
+            data: finalMapData,
             name: 'Số đơn hàng',
+            joinBy: 'hc-key',
+            borderColor: '#A0A0A0',
+            borderWidth: 0.5,
             states: {
-                hover: { color: '#f59e0b' }
-            },
-            // Cấu hình dataLabels mặc định cho toàn bộ series (sẽ bị ghi đè bởi từng item)
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}',
-                style: { fontWeight: 'normal', color: '#334155', textOutline: 'none' }
+                hover: { color: '#2563eb' }
             },
             tooltip: {
-                pointFormat: '{point.name}: <b>{point.value}</b> đơn',
-                headerFormat: ''
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                headerFormat: '<span style="font-size: 13px; font-weight: bold">{point.key}</span><br/>',
+                pointFormat: '📦 <b>{point.value}</b> đơn hàng'
             }
         }],
         credits: { enabled: false }
