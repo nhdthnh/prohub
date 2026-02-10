@@ -1,0 +1,79 @@
+{# 
+   MACRO: render_perf_card
+   - chart_id: ID dùng cho Highcharts
+   - title: Tiêu đề Card
+   - data_rows: List dữ liệu (VD: brand_table)
+   - data_total: Object tổng (VD: brand_total)
+   - max_vals: Object chứa max value để tính độ dài thanh bar
+   - entity_label: Tên cột đầu tiên (VD: "Brand", "Shop", "Nền tảng")
+   - entity_key: Key trong dict để lấy tên (VD: 'brand', 'shop_name')
+#}
+
+{% macro render_perf_card(chart_id, title, data_rows, data_total, max_vals, entity_label='Brand', entity_key='brand') %}
+<div class="chart-container perf-card-wrapper">
+    <h3 class="chart-title">{{ title }}</h3>
+    
+    <div class="perf-body">
+        <div class="chart-side">
+            <div id="{{ chart_id }}" style="height: 250px; width: 100%;"></div>
+        </div>
+
+        <div class="table-side">
+            <table class="table-perf">
+                <thead>
+                    <tr>
+                        <th style="width: 25%">{{ entity_label }}</th>
+                        <th style="width: 30%" class="text-right">Doanh Số</th>
+                        <th style="width: 15%" class="text-right">% Δ</th>
+                        <th style="width: 20%" class="text-right">Đơn Hàng</th>
+                        <th style="width: 10%" class="text-right">% Δ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in data_rows %}
+                    <tr>
+                        <td class="fw-bold">{{ item[entity_key] }}</td>
+                        
+                        <td class="text-right relative-cell">
+                            <div class="data-bar bar-primary" 
+                                 style="width: {{ (item.revenue / max_vals.rev * 100) | round(1) }}%;">
+                            </div>
+                            <span class="val-text">{{ "{:,.0f}".format(item.revenue) }}</span>
+                        </td>
+
+                        <td class="text-right fw-bold {{ 'text-success' if item.rev_growth >= 0 else 'text-danger' }}">
+                            {{ "{:,.1f}".format(item.rev_growth) }}%
+                        </td>
+
+                        <td class="text-right relative-cell">
+                            <div class="data-bar bar-secondary" 
+                                 style="width: {{ (item.orders / max_vals.ord * 100) | round(1) }}%;">
+                            </div>
+                            <span class="val-text">{{ "{:,.0f}".format(item.orders) }}</span>
+                        </td>
+
+                        <td class="text-right fw-bold {{ 'text-success' if item.ord_growth >= 0 else 'text-danger' }}">
+                            {{ "{:,.1f}".format(item.ord_growth) }}%
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                
+                <tfoot>
+                    <tr>
+                        <td>Tổng cộng</td>
+                        <td class="text-right">{{ "{:,.0f}".format(data_total.revenue) }}</td>
+                        <td class="text-right {{ 'text-success' if data_total.rev_growth >= 0 else 'text-danger' }}">
+                            {{ "{:,.1f}".format(data_total.rev_growth) }}%
+                        </td>
+                        <td class="text-right">{{ "{:,.0f}".format(data_total.orders) }}</td>
+                        <td class="text-right {{ 'text-success' if data_total.ord_growth >= 0 else 'text-danger' }}">
+                            {{ "{:,.1f}".format(data_total.ord_growth) }}%
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+{% endmacro %}

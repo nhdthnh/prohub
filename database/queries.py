@@ -252,48 +252,11 @@ class QueryManager:
             return {}
 
         if not raw_data:
-            return {'categories': [], 'series': []}
+            return []
 
-        # --- 4. PIVOT DỮ LIỆU (QUAN TRỌNG) ---
-        
-        # B1: Lấy danh sách tất cả Brand (Unique) và Platform (Unique)
-        # Sắp xếp Brand theo tổng doanh thu (để biểu đồ đẹp)
-        brand_revenue = {}
-        all_platforms = set()
-
-        for row in raw_data:
-            b = row['brand']
-            p = row['PlatformName']
-            rev = float(row['TotalRevenue'])
-            
-            all_platforms.add(p)
-            brand_revenue[b] = brand_revenue.get(b, 0) + rev
-
-        # Sort brand giảm dần theo doanh thu
-        sorted_brands = sorted(brand_revenue.keys(), key=lambda k: brand_revenue[k], reverse=True)
-        sorted_platforms = sorted(list(all_platforms))
-
-        # B2: Build Series cho Highcharts
-        # Cấu trúc: series = [{name: 'Shopee', data: [100, 200...]}, {name: 'Tiktok', data: [...]}]
-        series_data = []
-
-        for platform in sorted_platforms:
-            p_data = []
-            for brand in sorted_brands:
-                # Tìm giá trị của (Brand này + Platform này) trong raw_data
-                # Nếu không có thì bằng 0
-                val = next((float(item['TotalRevenue']) for item in raw_data if item['brand'] == brand and item['PlatformName'] == platform), 0)
-                p_data.append(val)
-            
-            series_data.append({
-                'name': platform,
-                'data': p_data
-            })
-
-        return {
-            'categories': sorted_brands, # Trục tung
-            'series': series_data        # Dữ liệu
-        }
+        # [CLEANUP] Logic pivot đã chuyển sang Service
+        # Trả về raw list dictionary
+        return raw_data
     
 
     def get_brand_performance(self, start_date_str, end_date_str, filter_dict=None):

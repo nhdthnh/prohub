@@ -23,7 +23,8 @@
 
 <body>
 
-    {% from 'macros/charts.html' import render_chart %}
+    {% raw %}{% endraw %}{% from 'macros/charts.html' import render_chart %}
+    {% from 'macros/chart_components.html' import render_perf_card %}
 
     {% include 'components/sidebar.html' %}
 
@@ -38,17 +39,22 @@
             </div>
 
             <div class="charts-grid">
-
-                {{ render_chart('hourlyTrendChart', 'Biểu đồ Doanh thu & Đơn hàng theo giờ', '400px', 'span-2') }}
-
+                {{ render_chart('hourlyTrendChart', 'Biểu đồ Doanh thu & Đơn hàng theo giờ', '400px', 'span-3') }}
                 {{ render_chart('statusPieChart', 'Trạng Thái Đơn Hàng', '400px') }}
-
                 {{ render_chart('vietnamMap', 'Mật độ đơn hàng theo Tỉnh/Thành', '400px') }}
             </div>
 
             <div class="charts-grid">
-                {{ render_chart('brandPlatformChart', 'Doanh Số Theo Brand Và Nền Tảng', '500px', 'span-2') }}
-                {{ render_chart('brandPerformancePie', 'Doanh Số Theo Brand', '500px') }}
+                {{ render_chart('brandPlatformChart', 'Doanh Số Theo Brand Và Nền Tảng', '400px', 'span-2') }}
+                {{ render_perf_card(
+                chart_id='brandPerformancePie',
+                title='Doanh Số Theo Brand',
+                data_rows=brand_table,
+                data_total=brand_total,
+                max_vals=max_vals,
+                entity_label='Brand',
+                entity_key='brand'
+                ) }}
             </div>
         </div>
 
@@ -56,77 +62,48 @@
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/virtual-select-plugin@1.0.39/dist/virtual-select.min.js"></script>
-
     <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
     <script src="https://code.highcharts.com/maps/modules/map.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/mapdata/countries/vn/vn-all.js"></script>
 
     <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script src="{{ url_for('static', filename='js/datepicker.js') }}"></script>
     <script src="{{ url_for('static', filename='js/filters.js') }}"></script>
-
+    <script src="{{ url_for('static', filename='js/chart_builder.js') }}"></script>
     <script src="{{ url_for('static', filename='js/chart_map.js') }}"></script>
-
     <script src="{{ url_for('static', filename='js/chart_factory.js') }}"></script>
 
+    <!-- Inject Data for Dashboard Script -->
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // 1. Lấy dữ liệu từ Python (Sửa tên biến cho khớp với Python của bạn)
+        // Sử dụng biến toàn cục để truyền dữ liệu từ Python sang JS một cách an toàn
+        window.dashboardData = {
+            // Dữ liệu Line Chart
+            chartLabels: {{ chart_labels | tojson | safe }},
+            chartRevenue: {{ chart_revenue | tojson | safe }},
+            chartOrders: {{ chart_orders | tojson | safe }},
 
-            // Dữ liệu Line Chart (Ghép từ 3 biến rời thành 1 object)
-            const hourlyData = {
-                hours: {{ chart_labels | tojson | default ('[]')
-        }},
-            revenue: {{ chart_revenue | tojson | default('[]') }},
-            orders: {{ chart_orders | tojson | default('[]') }}
-            };
+            // Dữ liệu Pie Chart (Status)
+            rawStatus: {{ raw_status | tojson | safe }},
 
-        // Dữ liệu Pie Chart (Lấy raw_status và map lại cho đúng format Highcharts)
-        const rawStatus = {{ raw_status | tojson | default ('[]') }};
-        const pieData = rawStatus.map(item => ({
-            name: item.StatusName || 'Unknown',
-            y: item.Orders
-        }));
+            // Dữ liệu Map
+            rawProvince: {{ raw_province | tojson | safe }},
 
-        // Dữ liệu Map
-        const mapData = {{ raw_province | tojson | default ('[]') }};
+            // Dữ liệu Bar Chart (Stacked)
+            rawBrandPlatform: {{ raw_brand_platform | tojson | safe }},
 
-        // Dữ liệu Bar Chart
-        const barData = {{ raw_brand_platform | tojson | default ('null') }};
+            // Dữ liệu Donut Chart (Brand Performance)
+            brandPieData: {{ brand_pie_data | tojson | safe }},
 
-        // 2. Vẽ biểu đồ bằng Factory
-
-        // Vẽ Line Chart
-        if (hourlyData.hours && hourlyData.hours.length > 0) {
-            ChartFactory.createDualLine('hourlyTrendChart', hourlyData);
-        }
-
-        // Vẽ Pie Chart
-        if (pieData && pieData.length > 0) {
-            ChartFactory.createDonut('statusPieChart', pieData);
-        }
-
-        // Vẽ Map (Nếu hàm initVietnamMap đã được load từ chart_map.js)
-        if (mapData && typeof initVietnamMap === 'function') {
-            initVietnamMap(mapData);
-        }
-
-        // Vẽ Bar Chart (Stacked)
-        if (barData) {
-            ChartFactory.createStackedBar('brandPlatformChart', barData);
-        }
-        const brandPieData = {{ brand_pie_data | tojson | default ('[]') }};
-        // Lấy chuỗi tổng doanh thu đã format sẵn từ Python (để hiện giữa biểu đồ)
-        // Lưu ý: Biến brand_total được truyền từ route b2c.py
-        const totalRevenueStr = '{{ "{:,.0f}".format(brand_total.revenue) if brand_total else "0" }}';
-
-        // 2. Vẽ biểu đồ bằng Factory mới
-        if (brandPieData && brandPieData.length > 0) {
-            ChartFactory.createBrandDonut('brandPerformancePie', brandPieData, totalRevenueStr);
-        }
-        });
+        // Tổng doanh thu (String đã format sẵn từ Python, nhớ dùng dấu nháy đơn bao quanh)
+        brandTotalRevenue: '{{ "{:,.0f}".format(brand_total.revenue) if brand_total else "0" }}'
+        };
     </script>
+
+    <!-- Page Specific Script -->
+    <script src="{{ url_for('static', filename='js/pages/dashboard.js') }}"></script>
 
 </body>
 

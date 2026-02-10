@@ -32,11 +32,11 @@ function initVietnamMap(dbData) {
 
     // 2. Xử lý dữ liệu
     dbData.forEach(item => {
-        let rawName = item.Province || item.ProvinceName; 
+        let rawName = item.Province || item.ProvinceName;
         if (rawName) {
             let normalizedName = rawName.toString().trim().toLowerCase();
             let mapKey = provinceMapping[normalizedName];
-            
+
             if (mapKey) {
                 let val = parseInt(item.Orders);
                 if (val > maxValue) maxValue = val;
@@ -56,63 +56,53 @@ function initVietnamMap(dbData) {
     // Cấu hình Label (chỉ hiện Top 10)
     const finalMapData = tempMapData.map((item, index) => {
         if (index < 10) {
-             item.dataLabels = { 
-                 enabled: true,
-                 format: '{point.name}<br/><span style="font-size:11px; font-weight:bold">{point.value}</span>', 
-                 style: { fontWeight: 'normal', color: 'black', textOutline: '1px white', textAlign: 'center' },
-                 allowOverlap: true,
-                 y: -5
-             };
-             item.z = 1000 - index;
+            item.dataLabels = {
+                enabled: true,
+                format: '{point.name}<br/><span style="font-size:11px; font-weight:bold">{point.value}</span>',
+                style: { fontWeight: 'normal', color: 'black', textOutline: '1px white', textAlign: 'center' },
+                allowOverlap: true,
+                y: -5
+            };
+            item.z = 1000 - index;
         } else {
-             item.dataLabels = { enabled: false };
+            item.dataLabels = { enabled: false };
         }
         return item;
     });
 
     // 3. Render Map
-    Highcharts.mapChart('vietnamMap', {
+    ChartBuilder.map('vietnamMap', {
         chart: {
             map: 'countries/vn/vn-all',
-            style: { fontFamily: 'Inter, sans-serif' },
-            
             // --- CẤU HÌNH AUTO ZOOM ---
             events: {
                 load: function () {
-                    // Tìm điểm có giá trị lớn nhất (đã sort ở trên nên là phần tử đầu tiên của finalMapData)
-                    // Tuy nhiên cần tìm object Point thực tế của Highcharts để gọi hàm zoomTo
+                    // Tìm điểm có giá trị lớn nhất
                     const series = this.series[0];
                     if (series.points.length > 0) {
-                        // Tìm point có value = maxValue
                         let maxPoint = null;
                         for (let i = 0; i < series.points.length; i++) {
-                             if (series.points[i].value === maxValue) {
-                                 maxPoint = series.points[i];
-                                 break;
-                             }
+                            if (series.points[i].value === maxValue) {
+                                maxPoint = series.points[i];
+                                break;
+                            }
                         }
-
-                        // Thực hiện Zoom nếu tìm thấy
                         if (maxPoint) {
-                            maxPoint.zoomTo(); 
+                            maxPoint.zoomTo();
                         }
                     }
                 }
             }
-            // --------------------------
         },
 
         // --- XÓA CHART TITLE ---
-        title: { text: '' }, 
-        // -----------------------
+        title: { text: '' },
 
         // Bật điều hướng để user có thể Zoom Out lại
         mapNavigation: {
             enabled: true,
-            enableMouseWheelZoom: true, // Cho phép lăn chuột để zoom
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
+            enableMouseWheelZoom: true,
+            buttonOptions: { verticalAlign: 'bottom' }
         },
 
         colorAxis: {
@@ -120,9 +110,9 @@ function initVietnamMap(dbData) {
             max: maxValue,
             type: 'logarithmic',
             stops: [
-                [0, '#fff7bc'], 
-                [0.3, '#fec44f'], 
-                [0.6, '#d95f0e'], 
+                [0, '#fff7bc'],
+                [0.3, '#fec44f'],
+                [0.6, '#d95f0e'],
                 [1, '#993404']
             ]
         },
@@ -141,7 +131,6 @@ function initVietnamMap(dbData) {
                 headerFormat: '<span style="font-size: 13px; font-weight: bold">{point.key}</span><br/>',
                 pointFormat: '📦 <b>{point.value}</b> đơn hàng'
             }
-        }],
-        credits: { enabled: false }
+        }]
     });
 }

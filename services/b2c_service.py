@@ -52,6 +52,53 @@ class B2CService:
 
         return processed_brands, grand_total, max_vals, pie_data
 
+    def process_brand_platform_data(self, raw_data):
+        """
+        [MỚI] Xử lý Pivot cho Stacked Bar Chart (Brand x Platform)
+        Thay thế logic cũ trong queries.py
+        """
+        if not raw_data:
+            return {'categories': [], 'series': []}
+
+        # 1. Pivot Logic
+        brand_revenue = {}
+        all_platforms = set()
+
+        for row in raw_data:
+            # Lấy data an toàn
+            b = row.get('brand') or 'Unknown'
+            p = row.get('PlatformName') or 'Other'
+            rev = float(row.get('TotalRevenue') or 0)
+            
+            all_platforms.add(p)
+            brand_revenue[b] = brand_revenue.get(b, 0) + rev
+
+        # 2. Sorting
+        # Sort brand giảm dần theo tổng doanh thu
+        sorted_brands = sorted(brand_revenue.keys(), key=lambda k: brand_revenue[k], reverse=True)
+        sorted_platforms = sorted(list(all_platforms))
+
+        # 3. Build Series cho Highcharts
+        series_data = []
+        for platform in sorted_platforms:
+            p_data = []
+            for brand in sorted_brands:
+                # Tìm giá trị khớp (Brand + Platform) trong raw list
+                # (Lưu ý: Cách này O(N*M) hơi chậm nếu data lớn, nhưng với report dashboard thì ok)
+                val = next((float(item.get('TotalRevenue') or 0) for item in raw_data 
+                            if item.get('brand') == brand and item.get('PlatformName') == platform), 0)
+                p_data.append(val)
+            
+            series_data.append({
+                'name': platform,
+                'data': p_data
+            })
+
+        return {
+            'categories': sorted_brands,
+            'series': series_data
+        }
+
     def process_chart_data(self, raw_trend):
         """Xử lý biểu đồ Line (Hourly) an toàn tuyệt đối"""
         # 1. Tạo khung 24 giờ

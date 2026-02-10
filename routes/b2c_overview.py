@@ -42,6 +42,9 @@ def dashboard():
     # 4. GỌI SERVICE (Xử lý logic)
     brand_tbl, brand_tot, brand_max, brand_pie = b2c_service.process_brand_performance(raw_brand_perf)
     chart_lbl, chart_rev, chart_ord = b2c_service.process_chart_data(raw_trend)
+    
+    # [CLEANUP] Xử lý pivot data cho Stacked Bar
+    processed_brand_platform = b2c_service.process_brand_platform_data(raw_brand_platform)
 
     # 5. RENDER TEMPLATE (Truyền đầy đủ biến)
     return render_template(
@@ -63,8 +66,8 @@ def dashboard():
         raw_status=raw_status,
         raw_province=raw_province,
         
-        # [SỬA LỖI] Truyền biến này để tránh lỗi 'Undefined'
-        raw_brand_platform=raw_brand_platform, 
+        # [UPDATED] Data đã pivot cho Stacked Bar
+        raw_brand_platform=processed_brand_platform, 
 
         # Data cho Component Brand
         brand_table=brand_tbl,

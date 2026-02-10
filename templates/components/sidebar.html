@@ -4,48 +4,30 @@
             onclick="toggleSidebar()"></i>
     </div>
 
+    {% for group in sidebar_items %}
+    {% if group.type == 'group' %}
     <div class="nav-group">
         <div class="nav-group-header" onclick="toggleGroup(this)">
             <i class="fa-solid fa-caret-down arrow-icon"></i>
-            <i class="fa-solid fa-users main-icon"></i>
-            <span>[B2C] Revenue & Orders</span>
+            <i class="fa-solid {{ group.icon }} main-icon"></i>
+            <span>{{ group.title }}</span>
         </div>
         <div class="nav-list">
-            <a href="#" class="nav-item">Overview</a>
-            <a href="#" class="nav-item">Custom Report</a>
-            <a href="#" class="nav-item">Shopee Fee</a>
-            <a href="#" class="nav-item">TikTok Shop Fee</a>
+            {% for item in group.submenu %}
+            {% set url = url_for(item.endpoint) if item.endpoint != '#' else '#' %}
+            {% set active_class = 'active' if item.endpoint == request.endpoint else '' %}
+            <a href="{{ url }}" class="nav-item {{ active_class }}">{{ item.title }}</a>
+            {% endfor %}
         </div>
     </div>
-
-    <div class="nav-group">
-        <div class="nav-group-header" onclick="toggleGroup(this)">
-            <i class="fa-solid fa-caret-down arrow-icon"></i>
-            <i class="fa-solid fa-store main-icon"></i>
-            <span>[B2B] Revenue & Orders</span>
-        </div>
-        <div class="nav-list">
-            <a href="#" class="nav-item">Overview</a>
-            <a href="#" class="nav-item">Custom Theo KH</a>
-            <a href="#" class="nav-item">(Đối chiếu) KH MT/GT</a>
-        </div>
-    </div>
-
-    <a href="#" class="nav-single-item">
-        <i class="fa-solid fa-calculator"></i>
-        <span>Kế toán check</span>
+    {% elif group.type == 'single' %}
+    {% set url = url_for(group.endpoint) if group.endpoint != '#' else '#' %}
+    {% set active_class = 'active' if group.endpoint == request.endpoint else '' %}
+    <a href="{{ url }}" class="nav-single-item {{ active_class }}">
+        <i class="{{ group.icon }}"></i>
+        <span>{{ group.title }}</span>
     </a>
+    {% endif %}
+    {% endfor %}
 
-    <div class="nav-group">
-        <div class="nav-group-header" onclick="toggleGroup(this)">
-            <i class="fa-solid fa-caret-down arrow-icon"></i>
-            <i class="fa-solid fa-building main-icon"></i>
-            <span>Fulfillment</span>
-        </div>
-        <div class="nav-list">
-            <a href="#" class="nav-item">Overview</a>
-            <a href="#" class="nav-item">Chi phí vận hành</a>
-            <a href="#" class="nav-item">Kiểm tra tồn kho</a>
-        </div>
-    </div>
 </aside>
