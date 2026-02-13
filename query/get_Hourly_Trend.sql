@@ -1,3 +1,4 @@
+
 SELECT 
     HOUR(CreatedTime) as HOURNUM,
     COUNT(DISTINCT OmisellOrderNumber) as Orders,

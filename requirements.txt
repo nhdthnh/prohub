@@ -1,0 +1,29 @@
+"""
+OQR Dashboard - Main Application (Refactored)
+B2C Revenue & Orders Analytics Dashboard
+
+Clean, modular architecture with separated concerns.
+"""
+
+# Web Framework
+streamlit==1.31.1
+
+# Data Processing
+pandas==2.1.4
+numpy==1.26.3
+
+# Database
+sqlalchemy==2.0.23
+pymysql==1.1.0
+
+# Visualization
+plotly==5.18.0
+
+# Utilities
+python-dotenv==1.0.0
+
+# Development (optional)
+# pytest==7.4.3
+# black==23.12.1
+# flake8==6.1.0
+# mypy==1.7.1

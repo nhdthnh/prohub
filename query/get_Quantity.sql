@@ -1,9 +1,9 @@
-SELECT 
-    T.CurrQty AS Quantity,
-    T.PrevQty AS PreviousQuantity,
-    
-    /* Tính % Tăng trưởng ngay trong SQL */
-    CASE 
+SELECT T.CurrQty AS Quantity, T.PrevQty AS PreviousQuantity,
+
+/* Tinh Tang truong ngay trong SQL */
+
+
+CASE 
         WHEN T.PrevQty = 0 AND T.CurrQty > 0 THEN 100
         WHEN T.PrevQty = 0 THEN 0
         ELSE ((T.CurrQty - T.PrevQty) / T.PrevQty) * 100
@@ -13,9 +13,11 @@ FROM (
     SELECT 
         /* Tính Tổng Kỳ Hiện Tại */
         SUM(CASE WHEN CreatedTime BETWEEN %s AND %s THEN Quantity ELSE 0 END) AS CurrQty,
-        
-        /* Tính Tổng Kỳ Trước */
-        SUM(CASE WHEN CreatedTime BETWEEN %s AND %s THEN Quantity ELSE 0 END) AS PrevQty
+
+/* Tính Tổng Kỳ Trước */
+
+
+SUM(CASE WHEN CreatedTime BETWEEN %s AND %s THEN Quantity ELSE 0 END) AS PrevQty
 
     FROM 
         omisell_inventory

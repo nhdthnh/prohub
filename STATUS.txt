@@ -1,0 +1,49 @@
+✅ DATABASE CONNECTION ERROR FIXED
+
+═════════════════════════════════════════════════════════════════════
+
+PROBLEM
+─────────────────────────────────────────────────────────────────────
+
+Error Message:
+  "Kết nối database thất bại! Error: Not an executable object: 'SELECT 1'"
+
+Cause:
+  SQLAlchemy 2.0+ requires SQL strings to be wrapped in text() object
+
+═════════════════════════════════════════════════════════════════════
+
+SOLUTION APPLIED
+─────────────────────────────────────────────────────────────────────
+
+File Updated: src/db/connection.py
+
+Change:
+  from sqlalchemy import create_engine, Engine, event, text
+  ↑↑↑ Added "text" import
+
+  with engine.connect() as conn:
+      conn.execute(text("SELECT 1"))  ← Wrapped in text()
+      ↑↑↑ Changed from conn.execute("SELECT 1")
+
+═════════════════════════════════════════════════════════════════════
+
+VERIFICATION ✅
+─────────────────────────────────────────────────────────────────────
+
+✓ Database connection test: PASSED
+✓ App module loads: PASSED
+✓ All imports resolve: OK
+✓ Syntax validation: OK
+
+Connection String:
+  Engine(mysql+pymysql://root:***@192.168.1.119:3306/omisell_db?charset=utf8mb4)
+
+═════════════════════════════════════════════════════════════════════
+
+STATUS: READY TO USE ✅
+
+Run the app with:
+  streamlit run app.py
+
+═════════════════════════════════════════════════════════════════════

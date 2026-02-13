@@ -1,59 +1,41 @@
-# app.py
-from flask import Flask
-# Import Blueprint từ file routes
-from routes.b2c_overview import b2c_bp 
+"""
+OQR Dashboard - Main Application
+B2C Revenue & Orders Analytics Dashboard
+"""
 
-app = Flask(__name__)
+import streamlit as st
 
-# Đăng ký Blueprint
-# url_prefix='/b2c' nghĩa là truy cập web.com/b2c sẽ vào trang này
-# Nếu muốn làm trang chủ thì để url_prefix='/'
-app.register_blueprint(b2c_bp, url_prefix='/') 
+import config
+from src.logger import get_logger
+from ui.styles import inject_styles
+from ui.sidebar import render_sidebar, render_page_content
 
-# --- CONFIG SIDEBAR ---
-@app.context_processor
-def inject_sidebar():
-    sidebar_items = [
-        {
-            "type": "group",
-            "title": "[B2C] Revenue & Orders",
-            "icon": "fa-users",
-            "submenu": [
-                {"title": "Overview", "endpoint": "b2c.dashboard"},
-                {"title": "Custom Report", "endpoint": "#"},
-                {"title": "Shopee Fee", "endpoint": "#"},
-                {"title": "TikTok Shop Fee", "endpoint": "#"}
-            ]
-        },
-        {
-            "type": "group",
-            "title": "[B2B] Revenue & Orders",
-            "icon": "fa-store",
-            "submenu": [
-                {"title": "Overview", "endpoint": "#"},
-                {"title": "Custom Theo KH", "endpoint": "#"},
-                {"title": "(Đối chiếu) KH MT/GT", "endpoint": "#"}
-            ]
-        },
-        {
-            "type": "single",
-            "title": "Kế toán check",
-            "icon": "fa-solid fa-calculator",
-            "endpoint": "#"
-        },
-        {
-            "type": "group",
-            "title": "Fulfillment",
-            "icon": "fa-building",
-            "submenu": [
-                {"title": "Overview", "endpoint": "#"},
-                {"title": "Chi phí vận hành", "endpoint": "#"},
-                {"title": "Kiểm tra tồn kho", "endpoint": "#"}
-            ]
-        }
-    ]
-    return dict(sidebar_items=sidebar_items)
+logger = get_logger(__name__)
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
+def initialize_app() -> None:
+    """Initialize Streamlit page configuration."""
+    st.set_page_config(**config.PAGE_CONFIG)
+    inject_styles()
+    
+    # Initialize menu map on first run
+    if not config.SIDEBAR_MENU_MAP:
+        config.SIDEBAR_MENU_MAP.update(config._init_menu_map())
+    
+    logger.info("App initialized")
+
+
+def main() -> None:
+    """Main application flow."""
+    initialize_app()
+    
+    # Render sidebar and get selected menu
+    selected_menu = render_sidebar()
+    
+    # Render page content based on selection
+    if selected_menu:
+        render_page_content(selected_menu)
+
+
+if __name__ == "__main__":
+    main()
